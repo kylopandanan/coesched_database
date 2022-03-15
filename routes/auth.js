@@ -104,8 +104,8 @@ router.post("/schedule", AuthToken, async (req, res) => {
 
   if (CheckInstructorTimeslot)
     return res.status(400).send({
-      message: `Instr. ${req.body.instructor} is not "Available".`,
-      description: `Instr. ${CheckInstructorTimeslot.instructor} is already scheduled for ${CheckInstructorTimeslot.section} at ${req.body.day} ${req.body.timeslot}.`,
+      message: `${req.body.instructor} is not "Available".`,
+      description: `${CheckInstructorTimeslot.instructor} is already scheduled for ${CheckInstructorTimeslot.section} at ${req.body.day} ${req.body.timeslot}.`,
     });
 
   const CheckRoomTimeslot = await AuthScheduleScheme.findOne({
@@ -390,11 +390,11 @@ router.post("/subject", AuthToken, async (req, res) => {
   if (error)
     return res.status(400).send({ error: error["details"][0]["message"] });
 
-  const CheckSubject = await AuthSubjectScheme.findOne({
-    subject: req.body.subject,
-  });
+  // const CheckSubject = await AuthSubjectScheme.findOne({
+  //   subject: req.body.subject,
+  // });
 
-  if (CheckSubject) return res.status(400).send({ message: "Subject found" });
+  // if (CheckSubject) return res.status(400).send({ message: "Subject found" });
 
   const CheckSCode = await AuthSubjectScheme.findOne({
     s_code: req.body.s_code,
@@ -481,7 +481,9 @@ router.post("/instructor", AuthToken, async (req, res) => {
 
 router.get("/instructor", async (req, res) => {
   try {
-    const data = await AuthInstructorScheme.find();
+    const data = await AuthInstructorScheme.find().sort({
+      instructor: 1,
+    });
     if (data) return res.send(data);
   } catch (err) {
     res.status(400).send(err);
